@@ -1,0 +1,552 @@
+// ============================================================
+// MEEV — Super Social Platform Database Schema
+// Discord + Instagram + Omegle + Hala/TikTok in one experience
+// SQLite via Prisma (sandbox adaptation of the PostgreSQL spec)
+// Note: arrays are stored as JSON strings (SQLite limitation)
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------- USERS & AUTH -------------------------
+
+model User {
+  id              String    @id // Snowflake-style unique id
+  email           String    @unique
+  username        String    @unique
+  displayName     String
+  passwordHash    String
+  avatarSeed      String    @default("") // deterministic MeevCat avatar seed
+  bio             String    @default("")
+  city            String?
+  interests       String    @default("[]") // JSON array of interest keys
+  xp              Int       @default(0)
+  activeSeconds   Int       @default(0) // accumulated active time (1 XP / hour)
+  coins           Int       @default(500) // Meev coins (gifting economy)
+  role            String    @default("user") // user | support | moderator | admin | owner (v5 staff ladder)
+  presence        String    @default("online") // online | busy | dnd | offline
+  customStatus    String? // v5 Discord-style custom status text (≤60 chars)
+  verifiedAt      DateTime? // v5: verified account (owner-granted trust badge)
+  bannedUntil     DateTime? // v5 owner-level ban (blocks login + all APIs)
+  bannedReason    String? // shown to the banned user at login
+  nameChangedAt   DateTime? // v5: display-name change lock (1 per month)
+  interestsChangedAt DateTime? // v5: interests change lock (1 per 3 months)
+  nameColor       String    @default("") // unlocked via levels
+  nameGradient   String    @default("") // equipped shop gradient item key (v2 shop)
+  frameKey       String    @default("") // equipped avatar frame key (v2 shop)
+  badgeShop      String    @default("") // equipped shop badge key (v2 shop)
+  avatarAcc      String    @default("") // equipped cat accessory key (v2 shop)
+  avatarPhoto    String? // uploaded photo avatar — overrides MeevCat when set (v2)
+  coverKey       String    @default("") // equipped profile cover item key (v3 shop)
+  coverPhoto     String? // v11: level-999 LEGEND unlock — custom uploaded cover image
+  profileEffect  String    @default("") // equipped profile background effect key (v3 shop)
+  avatarAnim     Boolean   @default(false) // level-999 animated avatar unlock (v3)
+  nameFx         String    @default("") // v11: equipped shop name-effect item key (nf-*)
+  lang           String    @default("ar") // ar | en (v2 i18n)
+  note           String? // v4 Instagram-style thought-bubble note above the profile (max 60 chars)
+  // v4 community-rules engine: per-category strike counts (JSON) + sanctions
+  modStrikes     String    @default("{}") // {"spam":0,"insult":0,"selfharm":0}
+  mutedUntil     DateTime? // temporary mute (cannot send messages)
+  suspendedUntil DateTime? // temporary suspension (cannot interact / sign in)
+  lastSpinAt     DateTime? // daily spin cooldown (v2)
+  lastHeartbeatAt DateTime? // activity heartbeat time-gate (v3 anti-XP-inflation)
+  emailVerifiedAt DateTime?
+  twoFactorEnabled Boolean   @default(false)
+  failedLogins    Int       @default(0)
+  lockedUntil     DateTime?
+  privacy         String    @default("{\"location\":\"friends\",\"interests\":\"everyone\",\"presence\":\"everyone\"}")
+  isGuest         Boolean   @default(false)
+  isBot           Boolean   @default(false)
+  lastActiveAt    DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  sessions              Session[]
+  refreshTokens         RefreshToken[]
+  emailTokens           EmailToken[]
+  posts                 Post[]
+  comments              Comment[]
+  likes                 Like[]
+  stories               Story[]
+  following             Follow[]       @relation("follower")
+  followers             Follow[]       @relation("following")
+  friendRequestsSent    FriendRequest[] @relation("fromUser")
+  friendRequestsRecv    FriendRequest[] @relation("toUser")
+  blocksGiven           Block[]        @relation("blocker")
+  blocksReceived        Block[]        @relation("blocked")
+  reportsFiled          Report[]       @relation("reporter")
+  reportsAgainst        Report[]       @relation("reported")
+  serverMembers         ServerMember[]
+  messages              Message[]      @relation("author")
+  dmConversationsA      DMConversation[] @relation("userA")
+  dmConversationsB      DMConversation[] @relation("userB")
+  notifications         Notification[]
+  giftsSent             Gift[]         @relation("sender")
+  giftsReceived         Gift[]         @relation("recipient")
+  pointsLog             PointsLog[]
+  badges                UserBadge[]
+  gamesAsX              MiniGame[]     @relation("playerX")
+  gamesAsO              MiniGame[]     @relation("playerO")
+  shopItems             UserItem[]
+  coinLogs              CoinLog[]
+  supportTickets        SupportTicket[]
+
+  @@index([username])
+  @@index([createdAt])
+}
+
+model Session {
+  id         String    @id
+  userId     String
+  device     String    @default("Unknown device")
+  ip         String    @default("")
+  userAgent  String    @default("")
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model RefreshToken {
+  id        String    @id
+  userId    String
+  tokenHash String    @unique
+  sessionDevice String @default("Unknown device")
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// OTP / verification codes: verify | reset | twofactor
+model EmailToken {
+  id        String    @id
+  userId    String
+  code      String
+  purpose   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+}
+
+model AuditLog {
+  id        String   @id
+  userId    String?
+  action    String
+  ip        String   @default("")
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ------------------------- SOCIAL GRAPH -------------------------
+
+model Follow {
+  id         String   @id
+  followerId String
+  followingId String
+  createdAt  DateTime @default(now())
+  follower   User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following  User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+}
+
+model FriendRequest {
+  id          String    @id
+  fromId      String
+  toId        String
+  status      String    @default("pending") // pending | accepted | declined
+  createdAt   DateTime  @default(now())
+  respondedAt DateTime?
+  from        User      @relation("fromUser", fields: [fromId], references: [id], onDelete: Cascade)
+  to          User      @relation("toUser", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@unique([fromId, toId])
+  @@index([toId, status])
+}
+
+model Block {
+  id         String   @id
+  blockerId  String
+  blockedId  String
+  createdAt  DateTime @default(now())
+  blocker    User     @relation("blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked    User     @relation("blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model Report {
+  id           String    @id
+  reporterId   String
+  targetType   String    @default("user") // user | message | post | match
+  targetUserId String?
+  targetId     String?
+  reason       String    // harassment | nsfw | spam | impersonation | other
+  details      String    @default("")
+  status       String    @default("open") // open | reviewing | resolved
+  action       String    @default("")
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime?
+  reporter     User      @relation("reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetUser   User?     @relation("reported", fields: [targetUserId], references: [id])
+
+  @@index([status, createdAt])
+}
+
+// ------------------------- CONTENT -------------------------
+
+model Post {
+  id        String   @id
+  authorId  String
+  content   String
+  imageUrl  String?
+  kind      String   @default("text") // text | image
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes     Like[]
+  comments  Comment[]
+
+  @@index([createdAt])
+  @@index([authorId, createdAt])
+}
+
+model Like {
+  id        String   @id
+  postId    String
+  userId    String
+  kind      String   @default("like") // like | love | laugh | sad (v13 reactions)
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId, kind])
+  @@unique([postId, userId])
+}
+
+model Comment {
+  id        String   @id
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+}
+
+model Story {
+  id        String   @id
+  authorId  String
+  kind      String   @default("text") // text | image
+  content   String   @default("")
+  gradient  String   @default("sunset") // gradient key for text stories
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  views     StoryView[]
+
+  @@index([expiresAt])
+}
+
+model StoryView {
+  id       String   @id
+  storyId  String
+  userId   String
+  viewedAt DateTime @default(now())
+  story    Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+}
+
+// ------------------------- COMMUNITIES (Discord-style) -------------------------
+
+model Server {
+  id          String   @id
+  name        String
+  description String   @default("")
+  iconEmoji   String   @default("🐱")
+  accentColor String   @default("#a855f7")
+  ownerId     String
+  isOfficial  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  members     ServerMember[]
+  channels    Channel[]
+
+  @@index([createdAt])
+}
+
+model ServerMember {
+  id        String   @id
+  serverId  String
+  userId    String
+  role      String   @default("member") // owner | admin | mod | member
+  joinedAt  DateTime @default(now())
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([serverId, userId])
+}
+
+model Channel {
+  id        String   @id
+  serverId  String
+  name      String
+  topic     String   @default("")
+  kind      String   @default("text") // text | voice
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@unique([serverId, name])
+  @@index([serverId, position])
+}
+
+// ------------------------- MESSAGING -------------------------
+
+model DMConversation {
+  id            String    @id
+  userAId       String
+  userBId       String
+  createdAt     DateTime  @default(now())
+  lastMessageAt DateTime  @default(now())
+  // v3 streak flame system: consecutive days with messages in this DM
+  streakDays    Int       @default(0)
+  lastStreakDate DateTime? // UTC day of the last message that fed the streak
+  streakNotified Int      @default(0) // highest streak milestone already celebrated
+  // v3 chat themes (unlocked by streak milestones)
+  themeKey      String    @default("")
+  // v3 per-participant settings
+  mutedA        Boolean   @default(false) // userA muted notifications
+  mutedB        Boolean   @default(false) // userB muted notifications
+  deletedA      DateTime? // userA "delete for me" — hidden until a newer message
+  deletedB      DateTime? // userB "delete for me"
+  // v6 Instagram-style read receipts ("vu"): each side's read pointer.
+  // A message is "seen" by the partner when their readAt >= message.createdAt.
+  aReadAt       DateTime? // userA opened the chat at this instant
+  bReadAt       DateTime? // userB opened the chat at this instant
+  userA         User      @relation("userA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB         User      @relation("userB", fields: [userBId], references: [id], onDelete: Cascade)
+  messages      Message[]
+  games         MiniGame[]
+
+  @@unique([userAId, userBId])
+  @@index([lastMessageAt])
+}
+
+// Unified message pipeline: scope = "server" | "dm"
+model Message {
+  id             String    @id
+  scope          String    @default("dm")
+  channelId      String?   // when scope = server
+  conversationId String?   // when scope = dm
+  authorId       String
+  content        String    @default("")
+  kind           String    @default("text") // text | sticker | gift | system | poll | voice | game
+  attachmentUrl  String?
+  meta           String?   // JSON: poll options, gift key, sticker mood, game state...
+  createdAt      DateTime  @default(now())
+  editedAt       DateTime?
+  deletedAt      DateTime?
+  author         User      @relation("author", fields: [authorId], references: [id], onDelete: Cascade)
+  channel        Channel?  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  conversation   DMConversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  reactions      Reaction[]
+
+  @@index([scope, conversationId, createdAt])
+  @@index([scope, channelId, createdAt])
+  @@index([authorId])
+}
+
+model Reaction {
+  id        String   @id
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+}
+
+model MiniGame {
+  id             String    @id
+  conversationId String
+  kind           String    @default("xo")
+  state          String    @default("{\"board\":[null,null,null,null,null,null,null,null,null],\"turn\":\"x\"}")
+  playerXId      String
+  playerOId      String
+  status         String    @default("active") // active | finished | abandoned
+  winnerId       String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  conversation   DMConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  playerX        User      @relation("playerX", fields: [playerXId], references: [id])
+  playerO        User      @relation("playerO", fields: [playerOId], references: [id])
+
+  @@index([conversationId, status])
+}
+
+// ------------------------- GAMIFICATION -------------------------
+
+model PointsLog {
+  id        String   @id
+  userId    String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model BadgeCatalog {
+  key         String @id
+  name        String
+  description String @default("")
+  icon        String @default("🐱")
+  color       String @default("#a855f7")
+  levelRequired Int  @default(0)
+}
+
+model UserBadge {
+  id        String   @id
+  userId    String
+  badgeKey  String
+  earnedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeKey])
+}
+
+model GiftCatalog {
+  key        String   @id
+  name       String
+  description String  @default("")
+  price      Int
+  rarity     String   @default("common") // common | rare | epic | legendary
+  mood       String   @default("happy") // MeevCat mood for the gift animation
+  xpReward   Int      @default(0)
+
+  @@index([price])
+}
+
+model Gift {
+  id          String   @id
+  senderId    String
+  recipientId String
+  giftKey     String
+  coins       Int
+  note        String   @default("")
+  contextType String   @default("dm") // v16: dm | live only (post gifting removed by spec)
+  contextId   String   @default("")
+  createdAt   DateTime @default(now())
+  sender      User     @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient   User     @relation("recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, createdAt])
+  @@index([senderId, createdAt])
+}
+
+// ------------------------- NOTIFICATIONS -------------------------
+
+model Notification {
+  id        String   @id
+  userId    String
+  kind      String   // friend_request | follow | comment | like | gift | level_up | system | moderation | match
+  title     String
+  body      String   @default("")
+  data      String   @default("{}")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read, createdAt])
+}
+
+// ------------------------- SHOP (v2 — PawCoins economy) -------------------------
+
+model ShopCatalog {
+  key           String   @id
+  type          String // name_gradient | frame | badge | accessory
+  name          String
+  description   String   @default("")
+  price         Int
+  rarity        String   @default("common") // common | rare | epic | legendary
+  payload       String   @default("{}") // JSON: gradient css / ring style / icon / acc key
+  levelRequired Int      @default(0)
+  xpReward      Int      @default(5)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+model UserItem {
+  id         String   @id
+  userId     String
+  itemKey    String
+  equipped   Boolean  @default(false)
+  acquiredAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemKey])
+  @@index([userId])
+}
+
+// ------------------------- COIN LEDGER (v3 — economy anti-exploit audit trail) -------------------------
+
+model CoinLog {
+  id           String   @id
+  userId       String
+  delta        Int // signed: +credit / -debit
+  reason       String // daily_spin | shop_purchase | gift_sent | gift_received | admin_grant | seed
+  balanceAfter Int
+  contextId    String   @default("") // itemKey / giftId / ""
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model SupportTicket {
+  id        String    @id
+  userId    String
+  subject   String
+  category  String    @default("other") // account | gifts_coins | harassment | bug | other
+  message   String
+  // v19 support desk: the instant bilingual auto-ack is stored SEPARATELY
+  // from the human staff reply (`reply`). New tickets land "open" at the
+  // desk (🆕 awaiting a human) — the MeevCMD `reply <id> <text>` command
+  // writes the staff answer into `reply`, flips the status to "answered"
+  // (✅) and replaces the auto-ack in the user's «تذاكري» thread.
+  autoReply   String    @default("")
+  reply       String    @default("")
+  status      String    @default("open") // open = 🆕 awaiting human reply | answered = ✅
+  repliedById String    @default("") // staff member who answered ("" = nobody yet)
+  createdAt   DateTime  @default(now())
+  repliedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
