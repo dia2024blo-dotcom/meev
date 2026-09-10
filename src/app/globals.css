@@ -1,0 +1,1432 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-meev: var(--meev);
+  --color-meev-2: var(--meev-2);
+  --color-meev-3: var(--meev-3);
+}
+
+:root {
+  --radius: 0.75rem;
+  /* MEEV GOLD 2027 light mode (v15): ONE color identity — the muted
+     GOLD→CREAM gradient (#BEB15C→#D5CFAB) worn by the logo, the favicon,
+     the buttons and every accent — now on a PURE WHITE canvas (user:
+     "اما تخليها كامل سوداء وسمة كامل بيضاء"). Neutral surfaces, gold
+     soul: the brand reads crisper and the page never looks beige. */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.16 0.008 60);
+  /* v4: the MeevLogo eye/nose/mouth cutouts — must match the page bg so
+     the cat's face reads perfectly in LIGHT mode too (user report fix) */
+  --meev-cutout: #ffffff;
+  /* the ONE brand gradient (identical in both themes — the identity) */
+  --gold-1: #BEB15C;
+  --gold-2: #D5CFAB;
+  /* theme-aware gold ramp for gradient TEXT (needs contrast on cream) */
+  --aur-1: #8F7C35;
+  --aur-2: #C9C189;
+  /* v14: the pulse ring ramp — visible on cream (deep→mid golds) */
+  --pulse-ring-1: #A08B3D;
+  --pulse-ring-2: #D4C68A;
+  /* v5 dock: transparent floating icons — barely-there shadow in light mode
+     (a heavy black blur read as a "background box" behind each icon) */
+  --dock-icon-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.22));
+  --dock-logo-shadow: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.16));
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0.008 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.008 60);
+  --primary: oklch(0.55 0.09 92); /* v14: deep honey gold — ONE identity color */
+  --primary-foreground: oklch(0.99 0.005 85);
+  --secondary: oklch(0.96 0.004 85);
+  --secondary-foreground: oklch(0.28 0.02 50);
+  --muted: oklch(0.96 0.003 85);
+  --muted-foreground: oklch(0.55 0.018 60);
+  --accent: oklch(0.95 0.03 92);
+  --accent-foreground: oklch(0.4 0.07 85);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.902 0.006 75);
+  --input: oklch(0.902 0.006 75);
+  --ring: var(--primary);
+  --chart-1: var(--primary);
+  --chart-2: oklch(0.8 0.1 95);
+  --chart-3: oklch(0.6 0.09 88);
+  --chart-4: oklch(0.7 0.08 78);
+  --chart-5: oklch(0.85 0.05 90);
+  --sidebar: oklch(0.975 0.002 85);
+  --sidebar-foreground: oklch(0.16 0.008 60);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: oklch(0.99 0.005 85);
+  --sidebar-accent: oklch(0.945 0.03 90);
+  --sidebar-accent-foreground: oklch(0.4 0.07 85);
+  --sidebar-border: oklch(0.902 0.006 75);
+  --sidebar-ring: var(--primary);
+  --meev: oklch(0.62 0.1 92);
+  --meev-2: oklch(0.8 0.09 95);
+  --meev-3: oklch(0.52 0.09 85);
+}
+
+.dark {
+  /* MEEV GOLD 2027 dark (default) — TRUE BLACK night (user: "كامل
+     سوداء") carrying the SAME single gold identity: honey poured over
+     deep obsidian. OLED-pure, premium, and the gold pops harder than
+     it ever could on brown. Perfectly consistent with the white day. */
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.95 0.006 85);
+  --meev-cutout: #000000;
+  /* the brand gradient stays identical; gradient TEXT brightens for dark */
+  --aur-1: #D9CD82;
+  --aur-2: #F2ECD6;
+  /* v14: the pulse ring ramp — bright golds on cocoa */
+  --pulse-ring-1: #BEB15C;
+  --pulse-ring-2: #E0D9B8;
+  /* v5 dock: dark mode keeps a slightly deeper glow for pop */
+  --dock-icon-shadow: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  --dock-logo-shadow: drop-shadow(0 5px 14px rgba(0, 0, 0, 0.5));
+  --card: oklch(0.155 0.004 60);
+  --card-foreground: oklch(0.95 0.006 85);
+  --popover: oklch(0.185 0.005 60);
+  --popover-foreground: oklch(0.95 0.006 85);
+  --primary: oklch(0.83 0.08 95); /* v14: soft gold — the same identity by night */
+  --primary-foreground: oklch(0.13 0.01 55);
+  --secondary: oklch(0.225 0.006 60);
+  --secondary-foreground: oklch(0.95 0.006 85);
+  --muted: oklch(0.2 0.005 60);
+  --muted-foreground: oklch(0.68 0.012 70);
+  --accent: oklch(0.26 0.03 92);
+  --accent-foreground: oklch(0.95 0.03 90);
+  --destructive: oklch(0.65 0.2 20);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 13%);
+  --ring: var(--primary);
+  --chart-1: var(--primary);
+  --chart-2: oklch(0.82 0.09 95);
+  --chart-3: oklch(0.64 0.09 88);
+  --chart-4: oklch(0.74 0.08 78);
+  --chart-5: oklch(0.88 0.05 90);
+  --sidebar: oklch(0.12 0.003 60);
+  --sidebar-foreground: oklch(0.95 0.006 85);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: oklch(0.13 0.01 55);
+  --sidebar-accent: oklch(0.26 0.03 92);
+  --sidebar-accent-foreground: oklch(0.95 0.03 90);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: var(--primary);
+  --meev: oklch(0.78 0.09 95);
+  --meev-2: oklch(0.85 0.07 95);
+  --meev-3: oklch(0.68 0.09 88);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Cairo", "Segoe UI", Tahoma, ui-sans-serif, system-ui, sans-serif;
+  }
+  html {
+    font-family: "Cairo", "Segoe UI", Tahoma, ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+/* ================= Meev design language ================= */
+
+.meev-aurora-text {
+  /* v14: the ONE gold gradient — theme-aware ramp so it reads on cream
+     AND cocoa (deep honeys by day, bright golds by night) */
+  background: linear-gradient(90deg, var(--aur-1), var(--aur-2), var(--aur-1));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: meev-pan 9s linear infinite;
+}
+
+/* v14: THE brand gradient — the user's own swatch (#BEB15C→#D5CFAB).
+     Dark espresso ink for text/icons so every surface keeps contrast
+     (unlayered CSS beats Tailwind's layered text-* utilities, so the
+     old `text-white` call sites flip automatically). */
+.meev-gradient-btn {
+  background: linear-gradient(135deg, #C5B767 0%, #DDD6B4 100%);
+  color: #33290F;
+  box-shadow: inset 0 0 0 1px rgb(139 116 44 / 0.16), 0 2px 10px -4px rgb(120 100 40 / 0.35);
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+.meev-gradient-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05) saturate(1.05);
+  box-shadow: inset 0 0 0 1px rgb(139 116 44 / 0.22), 0 8px 22px -8px rgb(190 177 92 / 0.55);
+}
+.meev-gradient-btn:active { transform: translateY(0) scale(.98); }
+.meev-gradient-btn:disabled { filter: saturate(.6) brightness(.97); }
+
+.glass {
+  background: color-mix(in oklab, var(--card) 55%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border);
+}
+
+.meev-glow {
+  box-shadow: 0 0 18px -2px var(--meev-glow-color, rgba(190,177,92,.55));
+}
+
+.meev-shine {
+  position: relative;
+  overflow: hidden;
+}
+.meev-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.14) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform .6s ease;
+}
+.meev-shine:hover::after { transform: translateX(120%); }
+
+@keyframes meev-pan {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+@keyframes meev-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.meev-float { animation: meev-float 5s ease-in-out infinite; }
+
+@keyframes meev-pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px -2px rgba(190,177,92,.35); }
+  50% { box-shadow: 0 0 22px 0px rgba(166,146,66,.5); }
+}
+.meev-pulse-glow { animation: meev-pulse-glow 2.6s ease-in-out infinite; }
+
+@keyframes meev-pop {
+  0% { transform: scale(.6); opacity: 0; }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.meev-pop { animation: meev-pop .35s cubic-bezier(.34,1.56,.64,1) both; }
+
+@keyframes meev-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+.meev-wiggle { animation: meev-wiggle .5s ease-in-out; }
+
+@keyframes meev-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(.08); }
+}
+
+@keyframes meev-typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.meev-typing-dot { animation: meev-typing 1.2s infinite; }
+.meev-typing-dot:nth-child(2) { animation-delay: .18s; }
+.meev-typing-dot:nth-child(3) { animation-delay: .36s; }
+
+@keyframes meev-scan {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Level ring conic progress — v14: brand gold */
+.meev-level-ring {
+  background: conic-gradient(#BEB15C calc(var(--p) * 1%), rgba(255,255,255,.08) 0);
+}
+
+/* Custom scrollbars — soft gold, never loud */
+* { scrollbar-width: thin; scrollbar-color: rgba(190,177,92,.35) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(190,177,92,.4), rgba(166,146,66,.4));
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(190,177,92,.7), rgba(166,146,66,.7)); background-clip: padding-box; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Animated avatar glow (level 10+) — v14: the gold conic */
+.meev-avatar-glow {
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #BEB15C, #D9CD82, #A08B3D, #E3DCC0, #BEB15C);
+  animation: meev-spin 4s linear infinite;
+  filter: blur(6px);
+  opacity: .8;
+  z-index: 0;
+}
+@keyframes meev-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Fullscreen aurora background */
+.meev-bg-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.meev-bg-aurora::before, .meev-bg-aurora::after {
+  content: "";
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(120px);
+  /* v15: .12 → .09 — a whisper of brand gold over the true-black night
+     (coordination, never a color wash) */
+  opacity: 0.09;
+}
+/* v4 light theme: softer, milkier aurora blobs on the bright page */
+html:not(.dark) .meev-bg-aurora::before,
+html:not(.dark) .meev-bg-aurora::after {
+  /* v15: .09 → .05 — on PURE WHITE anything more reads as a beige page
+     (the user's "لون قديم" report) — this is a breath, not a tint */
+  opacity: 0.05;
+}
+.meev-bg-aurora::before {
+  background: radial-gradient(circle, #B9A84F, transparent 60%);
+  top: -20vmax;
+  left: -10vmax;
+  animation: meev-drift 26s ease-in-out infinite alternate;
+}
+.meev-bg-aurora::after {
+  background: radial-gradient(circle, #CBB87A, transparent 60%);
+  bottom: -25vmax;
+  right: -15vmax;
+  animation: meev-drift 32s ease-in-out infinite alternate-reverse;
+}
+@keyframes meev-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(8vmax, 6vmax) scale(1.15); }
+}
+
+/* Story ring — v14: the brand gold gradient with a calm halo (the neon
+   sunset conic + breathe animation are gone; seen/unseen is opacity) */
+.meev-story-ring {
+  background: conic-gradient(#BEB15C, #D5CFAB, #BEB15C);
+  box-shadow: 0 0 10px -4px rgba(190,177,92,.5);
+  transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s ease, opacity .2s ease;
+}
+.meev-story-ring:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 14px -4px rgba(190,177,92,.7);
+}
+.meev-story-ring-viewed { opacity: .45; }
+/* an unviewed ring breathes — a quiet "something new is waiting" */
+.meev-story-ring-live {
+  animation: meev-ring-breathe 2.8s ease-in-out infinite;
+}
+@keyframes meev-ring-breathe {
+  0%, 100% { box-shadow: 0 0 10px -3px rgba(190, 177, 92, .5); }
+  50% { box-shadow: 0 0 16px -2px rgba(190, 177, 92, .8); }
+}
+
+/* v16: the Facebook-style reaction picker — emojis wiggle while hovered */
+@keyframes meev-react-wiggle {
+  0%, 100% { transform: rotate(-9deg) scale(1.06); }
+  50% { transform: rotate(9deg) scale(1.06); }
+}
+button:hover > .meev-react-emoji,
+button:focus-visible > .meev-react-emoji {
+  animation: meev-react-wiggle .55s ease-in-out infinite;
+}
+
+/* Message input focus glow — gold */
+.meev-input-glow:focus-within {
+  box-shadow: 0 0 0 1px rgba(190,177,92,.5), 0 0 22px -8px rgba(166,146,66,.5);
+}
+
+/* Confetti particle */
+.meev-confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -12px;
+  animation: meev-confetti-fall linear forwards;
+}
+@keyframes meev-confetti-fall {
+  0% { transform: translateY(-12px) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg) scale(.6); opacity: 0; }
+}
+
+/* ================= MEEV v2 ================= */
+
+/* PawCoin shine: a quick coin-spin sparkle */
+@keyframes meev-coin-shine {
+  0% { transform: rotateY(0deg) scale(1); filter: brightness(1); }
+  50% { transform: rotateY(180deg) scale(1.18); filter: brightness(1.5); }
+  100% { transform: rotateY(360deg) scale(1); filter: brightness(1); }
+}
+.meev-coin-shine { animation: meev-coin-shine 0.9s ease-in-out; }
+
+/* Purchasable name gradients (shop items) */
+.meev-name-gradient {
+  background-image: var(--ng, linear-gradient(90deg, #ffc24d, #ff7e5f));
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.meev-name-gradient.meev-ng-animated {
+  background-size: 250% 100%;
+  animation: meev-pan 3.2s linear infinite;
+}
+
+/* Shop frames (avatar rings) */
+@keyframes meev-frame-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes meev-frame-pulse {
+  0%, 100% { transform: scale(1); opacity: .85; }
+  50% { transform: scale(1.22); opacity: 1; }
+}
+.meev-frame-spin { animation: meev-frame-spin 3.2s linear infinite; }
+.meev-frame-pulse { animation: meev-frame-pulse 1.6s ease-in-out infinite; }
+
+/* Gift box: shake before explosion */
+@keyframes meev-gift-shake {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-9deg) scale(1.04); }
+  40% { transform: rotate(8deg) scale(1.07); }
+  60% { transform: rotate(-7deg) scale(1.1); }
+  80% { transform: rotate(6deg) scale(1.12); }
+}
+.meev-gift-shaking { animation: meev-gift-shake .55s ease-in-out infinite; }
+
+/* Gift explosion: radial burst pieces */
+.meev-explode-piece {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  animation: meev-explode-burst forwards cubic-bezier(.16,.84,.44,1);
+}
+@keyframes meev-explode-burst {
+  0% { transform: translate(-50%, -50%) translate(0, 0) scale(.3) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--ex), var(--ey)) scale(var(--es, 1)) rotate(var(--er, 540deg)); opacity: 0; }
+}
+
+/* Emoji sticker pop */
+@keyframes meev-sticker-pop {
+  0% { transform: scale(.2) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(1.18) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.meev-sticker-pop { animation: meev-sticker-pop .45s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* ---------------- v9: the VERIFIED SEAL (circular, NO background) ----------------
+   A stroke-only certification ring + check (amber→pink→violet gradient).
+   It draws itself in once, then breathes with a soft glow pulse. Because
+   nothing is filled, it stays crisp on light, dark and photo surfaces. */
+.meev-verified-seal {
+  position: relative;
+  animation: meev-seal-pulse 2.8s ease-in-out infinite;
+}
+.meev-verified-seal svg circle {
+  stroke-dasharray: 63;
+  animation: meev-seal-draw-ring .8s ease-out both;
+}
+.meev-verified-seal svg path {
+  stroke-dasharray: 44;
+  animation: meev-seal-draw-check .7s .25s ease-out both;
+}
+@keyframes meev-seal-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(190,177,92,.4)); }
+  50% { filter: drop-shadow(0 0 6px rgba(190,177,92,.8)); }
+}
+@keyframes meev-seal-draw-ring {
+  from { stroke-dashoffset: 63; opacity: .3; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes meev-seal-draw-check {
+  from { stroke-dashoffset: 44; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---------------- v10: the HONOR badges (beside the verified seal) ----------------
+   Bare stroke-only rings with a centered emoji — NO background, NO label
+   (user spec). Each one draws its ring in, pops its emoji, then breathes a
+   glow in its own color (--hb); --d staggers them like medals being pinned.
+   The premium (shop) ring orbits a bright arc and carries a sparkle. */
+.meev-honor {
+  position: relative;
+  transition: transform .18s cubic-bezier(.34, 1.56, .64, 1);
+  animation: meev-honor-glow 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--d, 0ms) + 450ms);
+  cursor: default;
+}
+.meev-honor:hover { transform: scale(1.22); }
+.meev-honor:active { transform: scale(1.08); }
+.meev-honor .hr-ring {
+  stroke-dasharray: 66.6;
+  animation: meev-honor-draw .65s ease-out both;
+  animation-delay: var(--d, 0ms);
+}
+.meev-honor .hr-hair {
+  stroke-dasharray: 51.5;
+  animation: meev-honor-draw .5s ease-out both;
+  animation-delay: calc(var(--d, 0ms) + 90ms);
+}
+.meev-honor .hr-orbit {
+  animation: meev-honor-orbit 5.2s linear infinite;
+  animation-delay: calc(var(--d, 0ms) + 700ms);
+}
+.meev-honor-emoji {
+  animation: meev-honor-pop .5s cubic-bezier(.34, 1.56, .64, 1) both;
+  animation-delay: calc(var(--d, 0ms) + 80ms);
+}
+.meev-honor-sparkle {
+  animation: meev-honor-sparkle 2.6s ease-in-out infinite;
+}
+@keyframes meev-honor-glow {
+  0%, 100% { filter: drop-shadow(0 0 1px color-mix(in srgb, var(--hb, #f04a6e) 45%, transparent)); }
+  50% { filter: drop-shadow(0 0 5px var(--hb, #f04a6e)); }
+}
+@keyframes meev-honor-draw {
+  from { stroke-dashoffset: 66.6; opacity: .25; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes meev-honor-pop {
+  from { transform: scale(.2) rotate(-18deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes meev-honor-orbit {
+  to { stroke-dashoffset: -66.6; }
+}
+@keyframes meev-honor-sparkle {
+  0%, 100% { opacity: .45; transform: scale(.85) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(14deg); }
+}
+
+/* ---------------- v8: PREMIUM SHOP BADGE chip (profile rail) ----------------
+   Flowing aurora border — the equipped shop badge is visually distinct
+   from every earned medallion around it (v9: circular coin). */
+.meev-badge-premium {
+  background: linear-gradient(135deg, #BEB15C, #D9CD82, #BEB15C);
+  background-size: 300% 300%;
+  animation: meev-badge-flow 3.2s linear infinite;
+  box-shadow: 0 0 14px -5px rgba(190,177,92,.6);
+}
+@keyframes meev-badge-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------------- v9: STORY CINEMA (full-bleed viewer) ----------------
+   The photo fills the entire screen; every effect rides ON TOP of it. */
+/* slow cinematic zoom on the story photo (restarts per story via key) */
+.meev-kenburns {
+  animation: meev-kenburns 10s ease-out forwards;
+  will-change: transform;
+}
+@keyframes meev-kenburns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.08) translate(-1.6%, -2.2%); }
+}
+/* ambient particles drifting up the full screen */
+.meev-float-particle {
+  position: absolute;
+  bottom: -6vh;
+  opacity: 0;
+  animation: meev-float-up linear infinite;
+  will-change: transform;
+  text-shadow: 0 0 12px rgba(255, 255, 255, .55);
+}
+/* v12: BOX-SCOPED particles — the composer preview (and other small
+   stages) used the -118vh viewport float, so particles spent ~90% of
+   their cycle OUTSIDE a 208px box ("effects don't show" user report).
+   This variant travels only 260px — always visibly alive. */
+.meev-float-particle-box {
+  position: absolute;
+  bottom: -22px;
+  opacity: 0;
+  animation: meev-float-up-box linear infinite;
+  will-change: transform;
+  text-shadow: 0 0 10px rgba(255, 255, 255, .6);
+}
+@keyframes meev-float-up-box {
+  0% { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; }
+  12% { opacity: .9; }
+  82% { opacity: .5; }
+  100% { transform: translate3d(var(--sway, 14px), -252px, 0) scale(1.05); opacity: 0; }
+}
+@keyframes meev-float-up {
+  0% { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; }
+  10% { opacity: .8; }
+  88% { opacity: .45; }
+  100% { transform: translate3d(var(--sway, 24px), -118vh, 0) scale(1.1); opacity: 0; }
+}
+/* reaction burst — an emoji rocketing up from the reaction row */
+.meev-story-burst {
+  position: absolute;
+  bottom: 120px;
+  transform: translateX(-50%);
+  animation: meev-story-burst .95s cubic-bezier(.17,.84,.44,1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes meev-story-burst {
+  0% { transform: translateX(-50%) translateY(0) scale(.5) rotate(0deg); opacity: 0; }
+  14% { opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-42vh) scale(1.5) rotate(var(--rot, 12deg)); opacity: 0; }
+}
+/* the double-tap heart — pops big at the center then drifts up */
+.meev-big-heart {
+  animation: meev-big-heart 1s ease-out forwards;
+  will-change: transform, opacity;
+}
+@keyframes meev-big-heart {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(-14deg); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.25) rotate(3deg); opacity: 1; }
+  60% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -68%) scale(1.3) rotate(0deg); opacity: 0; }
+}
+/* text stories: the fullscreen gradient slowly breathes */
+.meev-gradient-pan {
+  background-size: 180% 180%;
+  animation: meev-pan 9s ease-in-out infinite alternate;
+}
+
+/* ---------------- v8: GIFT CINEMA (center-screen takeover) ----------------
+   The emoji rockets in from the bottom, halos + shockwave rings expand,
+   then the whole stage fades. Rides .meev-cinema-* classes. */
+@keyframes meev-cinema-fly-in {
+  0% { transform: translateY(60vh) scale(.25) rotate(-160deg); opacity: 0; }
+  55% { transform: translateY(-4vh) scale(1.22) rotate(6deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+}
+.meev-cinema-fly { animation: meev-cinema-fly-in 1s cubic-bezier(.22,1.14,.36,1) both; }
+@keyframes meev-cinema-shock {
+  0% { transform: scale(.15); opacity: .95; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+.meev-cinema-shock {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 3px solid rgba(255,255,255,.85);
+  animation: meev-cinema-shock .9s cubic-bezier(.16,.84,.44,1) forwards;
+  pointer-events: none;
+}
+@keyframes meev-cinema-halo {
+  0%, 100% { transform: scale(1); opacity: .55; }
+  50% { transform: scale(1.08); opacity: .95; }
+}
+.meev-cinema-halo {
+  position: absolute;
+  inset: -12%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--ci, rgba(190,177,92,.4)) 0%, transparent 68%);
+  animation: meev-cinema-halo 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes meev-cinema-label {
+  0% { transform: translateY(14px) scale(.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.meev-cinema-label { animation: meev-cinema-label .55s .25s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* ---------------- v8: TikTok-style live gift float ----------------
+   The animated node is a FULL-HEIGHT column with the emoji at its bottom,
+   so translateY % = distance across the whole room. The sender chip rides
+   under the emoji; the path sways gently as it rises. */
+@keyframes meev-gift-float {
+  0% { transform: translateY(0) scale(.5); opacity: 0; }
+  10% { opacity: 1; }
+  25% { transform: translateY(-22%) translateX(-14px) scale(1.05); }
+  50% { transform: translateY(-50%) translateX(12px) scale(1); }
+  75% { transform: translateY(-78%) translateX(-10px) scale(.95); }
+  92% { opacity: 1; }
+  100% { transform: translateY(-105%) translateX(6px) scale(.85); opacity: 0; }
+}
+.meev-gift-float {
+  animation: meev-gift-float var(--float-dur, 3.6s) linear forwards;
+  will-change: transform, opacity;
+}
+@keyframes meev-effect-float {
+  0% { transform: translateY(0) scale(.5) rotate(-8deg); opacity: 0; }
+  12% { opacity: .95; }
+  100% { transform: translateY(-72vh) scale(1.15) rotate(10deg); opacity: 0; }
+}
+.meev-effect-float {
+  animation: meev-effect-float var(--float-dur, 3s) ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* Spin wheel */
+@keyframes meev-wheel {
+  to { transform: rotate(var(--wheel-deg, 1440deg)); }
+}
+
+/* v3 streak flame — gentle flicker + tier-colored glow (color comes from
+   the element's `color`, the glow via drop-shadow(currentColor)) */
+@keyframes meev-flame-flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 5px currentColor); }
+  25% { transform: scale(1.14) rotate(2deg); filter: drop-shadow(0 0 11px currentColor); }
+  50% { transform: scale(0.94) rotate(-1deg); filter: drop-shadow(0 0 7px currentColor); }
+  75% { transform: scale(1.08) rotate(1deg); filter: drop-shadow(0 0 9px currentColor); }
+}
+.meev-flame { display: inline-block; animation: meev-flame-flicker 1.7s ease-in-out infinite; }
+
+/* RTL icon mirroring helper */
+[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+
+/* stronger arabic display numerals for headings */
+.font-display { letter-spacing: -0.01em; }
+
+/* ================= MEEV v3 — shop & profile cosmetics ================= */
+
+/* ---- premium name colors (nc-*) ---- */
+/* shine: moving specular highlight swept over a solid base color */
+@keyframes meev-name-shine {
+  0% { background-position: -160% 0, 0 0; }
+  100% { background-position: 260% 0, 0 0; }
+}
+.meev-name-shine {
+  color: transparent;
+  background-image:
+    linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, .95) 50%, transparent 60%),
+    linear-gradient(90deg, var(--nc, #fde047), var(--nc, #fde047));
+  background-size: 250% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: meev-name-shine 2.8s linear infinite;
+}
+/* neon: glowing tube in the payload color */
+@keyframes meev-name-neon {
+  0%, 100% {
+    text-shadow:
+      0 0 4px var(--nc, #22d3ee),
+      0 0 14px var(--nc, #22d3ee),
+      0 0 34px color-mix(in oklab, var(--nc, #22d3ee) 65%, transparent);
+  }
+  50% {
+    text-shadow:
+      0 0 7px var(--nc, #22d3ee),
+      0 0 24px var(--nc, #22d3ee),
+      0 0 56px color-mix(in oklab, var(--nc, #22d3ee) 65%, transparent);
+  }
+}
+.meev-name-neon {
+  color: var(--nc, #22d3ee);
+  animation: meev-name-neon 1.9s ease-in-out infinite;
+}
+/* rainbow: solid color cycling the full hue wheel */
+@keyframes meev-name-rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+.meev-name-rainbow {
+  color: #f43f5e;
+  animation: meev-name-rainbow 6s linear infinite;
+}
+
+/* ---- level-999 animated avatar ---- */
+@keyframes meev-avatar-pop {
+  0% { transform: scale(.88); }
+  55% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+.meev-avatar-pop { animation: meev-avatar-pop .38s cubic-bezier(.34, 1.56, .64, 1); }
+/* blurred spinning rainbow halo (drawn cat) */
+.meev-avatar-anim {
+  background: conic-gradient(from 0deg, #f59e0b, #ec4899, #a855f7, #06b6d4, #22c55e, #f59e0b);
+  filter: blur(4px);
+  opacity: .9;
+  animation: meev-spin 3.2s linear infinite;
+}
+/* crisp spinning rainbow ring (photo variant) */
+.meev-avatar-anim-ring {
+  background: conic-gradient(from 0deg, #f59e0b, #ec4899, #a855f7, #06b6d4, #22c55e, #f59e0b);
+  animation: meev-spin 3.2s linear infinite;
+}
+/* floating sparkle ✨ overlays */
+@keyframes meev-sparkle {
+  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); opacity: .95; }
+  50% { transform: translateY(-6px) scale(1.3) rotate(18deg); opacity: .35; }
+}
+.meev-sparkle { animation: meev-sparkle 2.4s ease-in-out infinite; }
+
+/* ---- animated profile covers (cv-*) ---- */
+@keyframes meev-cover-pan {
+  0% { background-position: 0% 100%, 100% 100%, 50% 100%; }
+  100% { background-position: 100% 100%, 0% 100%, 85% 100%; }
+}
+@keyframes meev-cover-hue {
+  0%, 100% { filter: hue-rotate(0deg) saturate(1); }
+  50% { filter: hue-rotate(32deg) saturate(1.25); }
+}
+@keyframes meev-cover-grid {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 0 26px, 0 0; }
+}
+@keyframes meev-twinkle {
+  0% { opacity: .3; }
+  100% { opacity: .95; }
+}
+.meev-cover-aurora {
+  background-color: #071022;
+  background-image:
+    radial-gradient(ellipse 60% 85% at 18% 115%, rgba(52, 211, 153, .5), transparent 60%),
+    radial-gradient(ellipse 55% 75% at 55% 125%, rgba(56, 189, 248, .42), transparent 62%),
+    radial-gradient(ellipse 60% 95% at 88% 112%, rgba(167, 139, 250, .5), transparent 58%);
+  background-size: 210% 210%, 190% 190%, 230% 230%;
+  animation: meev-cover-pan 9s ease-in-out infinite alternate;
+}
+.meev-cover-nebula {
+  background-color: #0a0618;
+  background-image:
+    radial-gradient(ellipse 70% 90% at 25% 110%, rgba(124, 58, 237, .55), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 78% 120%, rgba(59, 130, 246, .45), transparent 62%),
+    radial-gradient(ellipse 45% 60% at 50% 130%, rgba(236, 72, 153, .4), transparent 58%);
+  background-size: 200% 200%, 220% 220%, 180% 180%;
+  animation: meev-cover-pan 12s ease-in-out infinite alternate, meev-cover-hue 16s ease-in-out infinite;
+}
+.meev-cover-synthwave {
+  background: linear-gradient(180deg, #14082b 0%, #3b1a72 45%, #c2318f 78%, #ff7e67 100%);
+}
+.meev-cover-synthwave::before {
+  /* retro sun */
+  content: "";
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 55%, #ec4899 100%);
+  box-shadow: 0 0 34px rgba(251, 191, 36, .55);
+}
+.meev-cover-synthwave::after {
+  /* perspective neon grid floor */
+  content: "";
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  top: 52%;
+  bottom: -14%;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 45, 149, .5) 0 2px, transparent 2px 26px),
+    repeating-linear-gradient(90deg, rgba(255, 45, 149, .32) 0 2px, transparent 2px 42px);
+  transform: perspective(160px) rotateX(46deg);
+  transform-origin: top center;
+  animation: meev-cover-grid 2.4s linear infinite;
+}
+.meev-cover-lava {
+  background-color: #160404;
+  background-image:
+    radial-gradient(ellipse 85% 60% at 25% 112%, rgba(249, 115, 22, .7), transparent 55%),
+    radial-gradient(ellipse 70% 55% at 80% 118%, rgba(239, 68, 68, .55), transparent 55%),
+    radial-gradient(ellipse 110% 45% at 50% 135%, rgba(251, 191, 36, .55), transparent 50%);
+  background-size: 220% 220%, 200% 200%, 240% 240%;
+  animation: meev-cover-pan 5.5s ease-in-out infinite alternate;
+}
+.meev-cover-rainbow {
+  background-image: linear-gradient(115deg, #f43f5e, #f97316, #eab308, #22c55e, #06b6d4, #a855f7, #ec4899, #f43f5e);
+  background-size: 320% 100%;
+  animation: meev-pan 7s linear infinite;
+}
+.meev-cover-legend {
+  background-color: #160f04;
+  background-image:
+    radial-gradient(ellipse 70% 90% at 18% 118%, rgba(251, 191, 36, .65), transparent 55%),
+    radial-gradient(ellipse 60% 85% at 82% 118%, rgba(168, 85, 247, .55), transparent 60%),
+    radial-gradient(ellipse 110% 55% at 50% 135%, rgba(253, 224, 71, .6), transparent 52%);
+  background-size: 220% 220%, 200% 200%, 240% 240%;
+  animation: meev-cover-pan 8s ease-in-out infinite alternate;
+}
+.meev-cover-legend::before {
+  /* golden inner glow */
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 70px rgba(251, 191, 36, .45);
+  border-radius: inherit;
+}
+.meev-cover-legend::after {
+  /* star dust */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 30%, #fff 60%, transparent 70%),
+    radial-gradient(1px 1px at 32% 68%, #fff 60%, transparent 70%),
+    radial-gradient(1.2px 1.2px at 55% 22%, #fff 60%, transparent 70%),
+    radial-gradient(1px 1px at 72% 52%, #fff 60%, transparent 70%),
+    radial-gradient(1.5px 1.5px at 88% 34%, #fff 60%, transparent 70%),
+    radial-gradient(1px 1px at 45% 82%, #fff 60%, transparent 70%);
+  animation: meev-twinkle 2.8s ease-in-out infinite alternate;
+}
+
+/* ---- profile effects (pe-*) ---- */
+@keyframes meev-fx-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(26px, -16px) scale(1.25); }
+}
+.meev-fx-blob { animation: meev-fx-blob 9s ease-in-out infinite; }
+@keyframes meev-fx-rise {
+  0% { transform: translateY(6%) scale(.7) rotate(-8deg); opacity: 0; }
+  12% { opacity: .95; }
+  80% { opacity: .5; }
+  100% { transform: translateY(-230px) scale(1.15) rotate(10deg); opacity: 0; }
+}
+.meev-fx-rise { animation-name: meev-fx-rise; animation-timing-function: linear; animation-iteration-count: infinite; }
+@keyframes meev-fx-fall {
+  0% { transform: translateY(-10%) translateX(0) scale(.8); opacity: 0; }
+  10% { opacity: .9; }
+  85% { opacity: .6; }
+  100% { transform: translateY(220px) translateX(20px) scale(1); opacity: 0; }
+}
+.meev-fx-fall { animation-name: meev-fx-fall; animation-timing-function: linear; animation-iteration-count: infinite; }
+@keyframes meev-fx-ember {
+  0% { transform: translate(0, 0) scale(.6); opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: .8; }
+  100% { transform: translate(var(--sway, 10px), -200px) scale(1.15); opacity: 0; }
+}
+.meev-fx-ember { animation-name: meev-fx-ember; animation-timing-function: linear; animation-iteration-count: infinite; }
+.meev-fx-ring {
+  background: conic-gradient(from 0deg, #f43f5e, #f97316, #eab308, #22c55e, #06b6d4, #a855f7, #ec4899, #f43f5e);
+  animation: meev-spin 5s linear infinite;
+}
+/* conic border ring: everything except a 3px ring is masked out */
+.meev-fx-ring-mask {
+  padding: 3px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+.meev-orbit-spin { animation: meev-spin 12s linear infinite; }
+
+/* ---- legend marketing (shop banner + 999 hero sweep) ---- */
+@keyframes meev-legend-sheen {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.meev-legend-shimmer {
+  background: linear-gradient(110deg, #7c2d12 0%, #b45309 20%, #fde047 38%, #f59e0b 50%, #fde047 62%, #b45309 80%, #7c2d12 100%);
+  background-size: 200% 100%;
+  animation: meev-legend-sheen 3.4s linear infinite;
+}
+/* text variant: the shimmer gradient clipped to the GLYPHS. Done here in
+   unlayered CSS because the `background:` shorthand above resets
+   background-clip, silently beating Tailwind's layered bg-clip-text
+   utility — which made the title render as an empty gradient bar. */
+.meev-legend-shimmer.meev-legend-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes meev-hero-sweep {
+  0% { transform: translateX(-130%) skewX(-14deg); opacity: 0; }
+  18% { opacity: .75; }
+  100% { transform: translateX(240%) skewX(-14deg); opacity: 0; }
+}
+.meev-hero-sweep { animation: meev-hero-sweep 2.6s ease-in-out .35s 1 both; }
+
+/* gold pulse highlight used when the shop jumps to the legend items */
+@keyframes meev-legend-flash {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+  35% { box-shadow: 0 0 42px -4px rgba(251, 191, 36, .65); }
+}
+.meev-legend-flash { animation: meev-legend-flash 2.2s ease-in-out 2; }
+
+/* ---- reduced motion: freeze every v3 cosmetic animation ---- */
+@media (prefers-reduced-motion: reduce) {
+  .meev-name-shine, .meev-name-neon, .meev-name-rainbow,
+  .meev-avatar-pop, .meev-avatar-anim, .meev-avatar-anim-ring, .meev-sparkle,
+  .meev-cover-aurora, .meev-cover-nebula, .meev-cover-synthwave::after,
+  .meev-cover-lava, .meev-cover-rainbow, .meev-cover-legend, .meev-cover-legend::after,
+  .meev-fx-blob, .meev-fx-rise, .meev-fx-fall, .meev-fx-ember, .meev-fx-ring,
+  .meev-orbit-spin, .meev-legend-shimmer, .meev-hero-sweep, .meev-legend-flash,
+  /* v8 additions — premium chip flow, cinema + float loops
+     (the one-shot entrance animations stay so the moment still lands) */
+  .meev-badge-premium, .meev-cinema-halo,
+  /* v9 additions — story cinema loops + the seal's breathing glow
+     (the seal's one-shot draw-in is kept: it lands the moment, then stops) */
+  .meev-verified-seal, .meev-float-particle, .meev-gradient-pan, .meev-kenburns,
+  /* v10 additions — the honor badges' glow/orbit/sparkle loops (the one-shot
+     draw-in + pop are kept: the medals still get pinned, then go still) */
+  .meev-honor, .meev-honor .hr-orbit, .meev-honor-sparkle, .meev-story-ring-live {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   v5 — Notes as a real thinking cloud (Instagram/💭 style)
+   A puffy cloud shape built from overlapping radial bumps,
+   with two little thought-dots trailing down to the head.
+   ============================================================ */
+/* v14: the thought bubble (note-bubble.tsx) is drawn as an SVG cloud —
+   only the gentle bob lives here. The old CSS cloud's two symmetric top
+   bumps read as CAT EARS (user: "مش راس قطة") and are gone. */
+.meev-thought-bob {
+  animation: meev-cloud-bob 5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .meev-thought-bob { animation: none !important; }
+}
+@keyframes meev-cloud-bob {
+  0%, 100% { transform: translateY(0) rotate(-.6deg); }
+  50% { transform: translateY(-3px) rotate(.8deg); }
+}
+/* ============================================================
+   v11 — THE GENIUS ROUND 🧠✨
+   1) MEEV PULSE (نبض) — the stories system reborn: living
+      time-decay rings, constellation threads, orbiting satellites
+   2) SUPPORT CINEMA 🕊️ — gift boxes that EXPLODE into flying
+      creatures (doves, butterflies, cats, fireworks, meteors…)
+   3) NAME EFFECTS (nf-*) — wave / heartbeat / flicker / sparkle /
+      glitch / fire / holo / chrome3d
+   4) LEGEND COVER STUDIO — the level-999 golden unlock
+   ============================================================ */
+
+/* ---------------- 1) MEEV PULSE — v14: the CALM rail ----------------
+   The v11 "living ring" theatrics (time-decay arc, orbiting satellite,
+   constellation threads, freshness halo, ring breathing) are RETIRED
+   (user: "بدون افكت فقط صورة بروفيل في دائرة وعليها دائرة خفيفة بنفس
+   لون الموقع مثل انستغرام"). The rail is now a clean Instagram-style
+   gold ring — the component renders it inline (see home-view PulseRing),
+   so no CSS classes are needed here. */
+
+/* ---------------- 2) SUPPORT CINEMA 🕊️ — creatures fly out ---------------- */
+
+/* the box: drops in, lands with a bounce, then SHAKES harder and
+   harder until it detonates */
+.sc-box {
+  animation: sc-drop .55s cubic-bezier(.2,.9,.25,1.2) both;
+}
+.sc-box.shake {
+  animation: sc-shake .5s ease-in-out infinite;
+}
+@keyframes sc-drop {
+  0% { transform: translateY(-46vh) scale(.55) rotate(-14deg); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes sc-shake {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  20% { transform: translate(-5px,2px) rotate(-4deg); }
+  40% { transform: translate(5px,-3px) rotate(4deg); }
+  60% { transform: translate(-7px,1px) rotate(-6deg); }
+  80% { transform: translate(7px,-1px) rotate(6deg); }
+}
+
+/* the detonation flash + shockwaves */
+.sc-flash {
+  animation: sc-flash .5s ease-out both;
+}
+@keyframes sc-flash {
+  0% { opacity: 0; transform: scale(.4); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+/* CREATURE FLIGHT — every creature flies its own arc via --tx/--ty/--rot.
+   Nested wing span flaps at its own speed (--wd). */
+.sc-fly {
+  animation: sc-fly var(--fd, 2.2s) cubic-bezier(.16,.65,.4,1) var(--fdelay, 0s) both;
+  will-change: transform, opacity;
+}
+@keyframes sc-fly {
+  0% { transform: translate(0,0) scale(.3) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  78% { opacity: 1; }
+  100% { transform: translate(var(--tx, 40vw), var(--ty, -30vh)) scale(1.05) rotate(var(--rot, -12deg)); opacity: 0; }
+}
+.sc-wing {
+  display: inline-block;
+  animation: sc-wing var(--wd, .38s) ease-in-out infinite;
+}
+@keyframes sc-wing {
+  0%, 100% { transform: scaleX(1) rotate(0deg); }
+  50% { transform: scaleX(.5) rotate(-10deg); }
+}
+
+/* pets / coins / snow-like FALLING bursts */
+.sc-fall {
+  animation: sc-fall var(--fd, 2.8s) linear var(--fdelay, 0s) both;
+  will-change: transform, opacity;
+}
+@keyframes sc-fall {
+  0% { transform: translateY(-12vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(112vh) rotate(var(--fr, 360deg)); opacity: 0; }
+}
+.sc-sway {
+  display: inline-block;
+  animation: sc-sway 1.6s ease-in-out infinite;
+}
+@keyframes sc-sway {
+  0%, 100% { transform: translateX(-12px) rotate(-16deg); }
+  50% { transform: translateX(12px) rotate(16deg); }
+}
+
+/* METEOR streaks crossing the whole sky diagonally */
+.sc-meteor {
+  animation: sc-meteor var(--fd, 1.5s) cubic-bezier(.5,0,.8,.5) var(--fdelay, 0s) both;
+  will-change: transform, opacity;
+}
+@keyframes sc-meteor {
+  0% { transform: translate(0, 0) rotate(38deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--tx, 70vw), var(--ty, 70vh)) rotate(38deg); opacity: 0; }
+}
+.sc-meteor-trail {
+  display: inline-block;
+  width: 90px;
+  height: 2.5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, #fff, #fde68a);
+  filter: drop-shadow(0 0 6px #fbbf24);
+}
+
+/* FIREWORK burst points: a dot that pops into rings + sparks */
+.sc-fw-pop {
+  animation: sc-fw-pop 1.1s ease-out var(--fdelay, 0s) both;
+}
+@keyframes sc-fw-pop {
+  0% { transform: scale(0); opacity: 1; }
+  45% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* the RAINBOW arc drawing itself across the sky */
+.sc-rainbow-arc {
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: sc-rainbow-draw 1.6s ease-out .25s both;
+}
+@keyframes sc-rainbow-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* the support banner lands */
+.sc-banner {
+  animation: sc-banner .55s cubic-bezier(.2,.9,.3,1.3) both;
+}
+@keyframes sc-banner {
+  0% { transform: translateY(34px) scale(.85); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ---------------- 3) NAME EFFECTS (nf-*) ---------------- */
+
+/* wave — each letter bobs on its own delay (letters are split in JSX) */
+.meev-nf-wave-l {
+  display: inline-block;
+  animation: meev-nf-wave 1.7s ease-in-out var(--wd, 0s) infinite;
+}
+@keyframes meev-nf-wave {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+  60% { transform: translateY(1.5px); }
+}
+
+/* heartbeat — a double-thump pulse */
+.meev-nf-heartbeat {
+  display: inline-block;
+  animation: meev-nf-heartbeat 1.35s ease-in-out infinite;
+}
+@keyframes meev-nf-heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.09); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.13); }
+  56% { transform: scale(1); }
+}
+
+/* candle flicker — organic opacity + warmth dance */
+.meev-nf-flicker {
+  animation: meev-nf-flicker 2.7s linear infinite;
+}
+@keyframes meev-nf-flicker {
+  0%, 100% { opacity: 1; text-shadow: 0 0 4px color-mix(in oklab, var(--nc, #fb923c) 55%, transparent); }
+  8% { opacity: .72; }
+  12% { opacity: 1; }
+  27% { opacity: .82; text-shadow: 0 0 9px color-mix(in oklab, var(--nc, #fb923c) 85%, transparent); }
+  34% { opacity: 1; }
+  58% { opacity: .65; }
+  63% { opacity: 1; text-shadow: 0 0 6px color-mix(in oklab, var(--nc, #fb923c) 70%, transparent); }
+  82% { opacity: .86; }
+}
+
+/* sparkle — twinkling star shadows + a live ✨ riding the name */
+.meev-nf-sparkle {
+  animation: meev-nf-sparkle 1.9s ease-in-out infinite;
+}
+@keyframes meev-nf-sparkle {
+  0%, 100% { text-shadow: 0 0 0 transparent; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 22px color-mix(in oklab, var(--nc, #fde047) 85%, transparent); }
+}
+.meev-nf-sparkle-emoji {
+  display: inline-block;
+  font-size: .55em;
+  vertical-align: super;
+  margin-inline-start: 2px;
+  animation: meev-nf-sp-twinkle 1.15s ease-in-out infinite;
+}
+@keyframes meev-nf-sp-twinkle {
+  0%, 100% { transform: scale(.65) rotate(-12deg); opacity: .55; }
+  50% { transform: scale(1.2) rotate(14deg); opacity: 1; }
+}
+
+/* glitch — RGB split + micro jitters */
+.meev-nf-glitch {
+  position: relative;
+  animation: meev-nf-glitch-jitter 2.4s steps(1) infinite;
+}
+.meev-nf-glitch::before,
+.meev-nf-glitch::after {
+  content: attr(data-name);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.meev-nf-glitch::before {
+  color: #22d3ee;
+  transform: translate(-2px, -1px);
+  opacity: .55;
+  animation: meev-nf-glitch-a 2.4s steps(1) infinite;
+}
+.meev-nf-glitch::after {
+  color: #f43f5e;
+  transform: translate(2px, 1px);
+  opacity: .55;
+  animation: meev-nf-glitch-b 2.4s steps(1) infinite;
+}
+@keyframes meev-nf-glitch-jitter {
+  0%, 91%, 94%, 100% { transform: translate(0, 0); }
+  92% { transform: translate(-1.5px, 1px); }
+  93% { transform: translate(1.5px, -1px); }
+}
+@keyframes meev-nf-glitch-a {
+  0%, 88%, 100% { clip-path: inset(0 0 100% 0); transform: translate(-2px, -1px); }
+  90% { clip-path: inset(12% 0 55% 0); transform: translate(-4px, -2px); }
+  92% { clip-path: inset(60% 0 8% 0); transform: translate(3px, 1px); }
+  94% { clip-path: inset(30% 0 40% 0); transform: translate(-3px, 0); }
+}
+@keyframes meev-nf-glitch-b {
+  0%, 88%, 100% { clip-path: inset(100% 0 0 0); transform: translate(2px, 1px); }
+  90% { clip-path: inset(55% 0 12% 0); transform: translate(4px, 2px); }
+  92% { clip-path: inset(8% 0 60% 0); transform: translate(-3px, -1px); }
+  94% { clip-path: inset(40% 0 30% 0); transform: translate(3px, 0); }
+}
+
+/* fire — burning gradient letters with rising heat glow */
+.meev-nf-fire {
+  background: linear-gradient(180deg, #fde047 0%, #f97316 38%, #f43f5e 62%, #7c2d12 100%);
+  background-size: 100% 160%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 -1px 5px rgba(249, 115, 22, .55));
+  animation: meev-nf-fire 1.15s ease-in-out infinite;
+}
+@keyframes meev-nf-fire {
+  0%, 100% { background-position: 50% 0%; filter: drop-shadow(0 -1px 5px rgba(249,115,22,.55)); }
+  50% { background-position: 50% 100%; filter: drop-shadow(0 -3px 9px rgba(244,63,94,.75)); }
+}
+
+/* hologram — iridescent hue sweep */
+.meev-nf-holo {
+  background: linear-gradient(100deg, #22d3ee, #a855f7, #ec4899, #fde047, #22c55e, #22d3ee);
+  background-size: 320% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: meev-nf-holo 3.2s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(168, 85, 247, .35));
+}
+@keyframes meev-nf-holo {
+  to { background-position: 320% 0; }
+}
+
+/* chrome3d — extruded silver with a traveling specular highlight */
+.meev-nf-chrome3d {
+  background: linear-gradient(105deg, #e2e8f0 0%, #94a3b8 22%, #f8fafc 42%, #cbd5e1 58%, #f1f5f9 72%, #94a3b8 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 1px 0 rgba(148, 163, 184, .9),
+    0 2px 0 rgba(100, 116, 139, .85),
+    0 3px 0 rgba(71, 85, 105, .8),
+    0 4px 0 rgba(51, 65, 85, .75),
+    0 6px 9px rgba(0, 0, 0, .45);
+  animation: meev-nf-chrome 2.6s ease-in-out infinite;
+}
+@keyframes meev-nf-chrome {
+  0%, 100% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+}
+
+/* ---------------- 4) LEGEND COVER STUDIO (level-999 unlock) ---------------- */
+.meev-legend-gold-text {
+  background: linear-gradient(100deg, #fde68a, #f59e0b, #fbbf24, #f59e0b, #fde68a);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: meev-legend-gold 2.8s linear infinite;
+}
+@keyframes meev-legend-gold {
+  to { background-position: 250% 0; }
+}
+.meev-legend-rays {
+  background: conic-gradient(from 0deg, transparent 0deg 14deg, rgba(251,191,36,.16) 16deg 22deg, transparent 24deg 40deg, rgba(251,191,36,.12) 42deg 48deg, transparent 50deg 90deg, rgba(251,191,36,.16) 92deg 98deg, transparent 100deg 180deg, rgba(251,191,36,.12) 182deg 190deg, transparent 192deg 360deg);
+  animation: meev-legend-rays 9s linear infinite;
+}
+@keyframes meev-legend-rays {
+  to { transform: rotate(360deg); }
+}
+
+/* v11 reduced-motion freezes (v14: pulse classes retired with the calm rail) */
+@media (prefers-reduced-motion: reduce) {
+  .sc-fly, .sc-wing, .sc-fall, .sc-sway, .sc-meteor, .sc-fw-pop, .sc-rainbow-arc,
+  .meev-nf-wave-l, .meev-nf-heartbeat, .meev-nf-flicker, .meev-nf-sparkle,
+  .meev-nf-sparkle-emoji, .meev-nf-glitch, .meev-nf-glitch::before, .meev-nf-glitch::after,
+  .meev-nf-fire, .meev-nf-holo, .meev-nf-chrome3d,
+  .meev-legend-gold-text, .meev-legend-rays {
+    animation: none !important;
+  }
+}
+
+/* ============================================================ */
+/* v12: PREMIUM FRAMES (fr-phoenix · fr-prism · fr-orbit ·      */
+/* fr-diamond · fr-aurum · fr-eclipse · fr-meev999)             */
+/* MEEV GOLD tokens only (deep golds + soft creams — v14 identity).
+   All animations are transform / opacity / filter only — GPU-cheap.
+   Rings reuse .meev-frame-spin with inline durations/directions. */
+/* ============================================================ */
+
+/* prism — the conic ring spins while its hue slowly cycles
+   (light splitting through glass); no inline animationDuration
+   allowed here (it would override BOTH durations) */
+@keyframes meev-frame-hue {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
+}
+.meev-frame-prism {
+  animation: meev-frame-spin 7s linear infinite, meev-frame-hue 12s linear infinite;
+}
+
+/* meev999 — a very slow living hue-shift on the gold glow */
+.meev-frame-hue-slow {
+  animation: meev-frame-hue 26s linear infinite;
+}
+
+/* eclipse — tiny twinkling star dots (opacity + scale only) */
+@keyframes meev-frame-twinkle {
+  0%, 100% { opacity: .25; transform: scale(.75); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.meev-frame-star {
+  animation: meev-frame-twinkle 2.6s ease-in-out infinite;
+}
+
+/* v12 premium frames reduced-motion freeze */
+@media (prefers-reduced-motion: reduce) {
+  .meev-frame-prism, .meev-frame-hue-slow, .meev-frame-star {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   v13 — BADGE MEDALS (Task 2-b: شارات رمزية — symbol badges)
+   The legendary badge shimmer: a bright arc of light sweeping
+   around the BadgeGlyph medal ring every 3s (badge-glyph.tsx).
+   ============================================================ */
+.meev-badge-shimmer .bg-sweep {
+  stroke-dasharray: 18 999;
+  stroke-dashoffset: 117;
+  opacity: 0;
+  animation: meev-badge-sweep 3s ease-in-out infinite;
+}
+@keyframes meev-badge-sweep {
+  0% { stroke-dashoffset: 117; opacity: 0; }
+  15% { opacity: .95; }
+  55% { stroke-dashoffset: -27; opacity: .95; }
+  70% { stroke-dashoffset: -60; opacity: 0; }
+  100% { stroke-dashoffset: -117; opacity: 0; }
+}
+/* v13 reduced-motion freeze */
+@media (prefers-reduced-motion: reduce) {
+  .meev-badge-shimmer .bg-sweep { animation: none !important; opacity: 0; }
+}
+
+/* ============================================================
+   v14 — DESKTOP DRAG-SCROLL RAILS (drag-rails.tsx)
+   Any horizontal row with .meev-drag-rail can be GRABBED and
+   dragged with the mouse (like a phone swipe) and scrolls
+   horizontally on the wheel while it can still move.
+   ============================================================ */
+.meev-drag-rail {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.meev-drag-rail.meev-dragging {
+  cursor: grabbing;
+}
