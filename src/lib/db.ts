@@ -20,7 +20,7 @@ async function buildClient(): Promise<PrismaClient> {
 
   // 2) fresh class from the package export
   try {
-    const candidate = new PrismaClient({ log: ['query'] })
+    const candidate = new PrismaClient({ log: [''] })
     if ('supportTicket' in (candidate as unknown as Record<string, unknown>)) {
       return candidate
     }
@@ -36,10 +36,10 @@ async function buildClient(): Promise<PrismaClient> {
     const mod = (await import('../../node_modules/.prisma/client/index.js')) as unknown as {
       PrismaClient: new (opts: { log: ('query' | 'info' | 'warn' | 'error')[] }) => PrismaClient
     }
-    return new mod.PrismaClient({ log: ['query'] })
+    return new mod.PrismaClient({ log: [''] })
   } catch {
     // last resort — whatever the package export gives
-    return new PrismaClient({ log: ['query'] })
+    return new PrismaClient({ log: [''] })
   }
 }
 
